@@ -10,7 +10,7 @@ public sealed class MyTypeTests
     #region Fields
     #region Static fields
     private const string TestLabel = nameof(TestLabel);
-    private const string OtherLabel = nameof(OtherLabel);
+    private const string DifferentLabel = nameof(DifferentLabel);
     private static readonly MyTypeTests Instance = new();
     #endregion Static fields
 
@@ -29,7 +29,7 @@ public sealed class MyTypeTests
     {
         _quantity = GetRandomQuantity();
         _label = TestLabel;
-        _myType = new(_quantity, _label);
+        _myType = GetMyType();
     }
     #endregion Test prep
 
@@ -86,7 +86,7 @@ public sealed class MyTypeTests
     {
         // Arrange
         _quantity = GetRandomQuantity();
-        MyType other = new(_quantity, _label);
+        MyType other = GetMyType();
         int expected = _quantity.GetHashCode();
 
         // Act
@@ -103,7 +103,7 @@ public sealed class MyTypeTests
     #region Dynamic data
     private IEnumerable<object[]> GetEqualsObjectArgs()
     {
-        _myType = new(_quantity, _label);
+        _myType = GetMyType();
 
         string testCase = "null => false";
         object obj = null;
@@ -115,23 +115,27 @@ public sealed class MyTypeTests
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, same Label => true";
-        obj = new MyType(_quantity, _label);
+        obj = GetMyType();
         expected = true;
         yield return argsToObjectArray();
 
         testCase = "Different Quantity, same Label => false";
         _quantity = GetRandomQuantity(_quantity);
-        obj = new MyType(_quantity, _label);
+        obj = GetMyType();
         expected= false;
+        yield return argsToObjectArray();
+
+        testCase = "Different Quantity, different Label => false";
+        _label = DifferentLabel;
+        obj = GetMyType();
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, different Label => false";
         _quantity = _myType.Quantity;
-        _label = OtherLabel;
-        obj = new MyType(_quantity, _label);
+        obj = GetMyType();
         yield return argsToObjectArray();
 
-        #region toObjectArray
+        #region argsToObjectArray
         object[] argsToObjectArray()
         {
             TestCase_bool_MyType_object args = new(testCase, expected, _myType, obj);
@@ -150,31 +154,38 @@ public sealed class MyTypeTests
         yield return argsToObjectArray();
 
         testCase = "MyType, null => false";
-        x = new(_quantity, _label);
+        x = GetMyType();
         expected = false;
         yield return argsToObjectArray();
 
         testCase = "null, MyType => false";
         x = null;
-        y = new(_quantity, _label);
+        y = GetMyType();
+        yield return argsToObjectArray();
+
+        testCase = "Same Quantity, same Label => true";
+        x = GetMyType();
+        expected = true;
         yield return argsToObjectArray();
 
         testCase = "Different Quantity, same Label => false";
         _quantity = GetRandomQuantity(_quantity);
-        x = new(_quantity, _label);
+        x = GetMyType();
+        expected = false;
+        yield return argsToObjectArray();
+
+        testCase = "Different Quantity, different Label => false";
+        _label = DifferentLabel;
+        x = GetMyType();
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, different Label => true";
-        _label = OtherLabel;
-        y = new(_quantity, _label);
+        _quantity = y.Quantity;
+        x = GetMyType();
         expected = true;
         yield return argsToObjectArray();
 
-        testCase = "Same Quantity, same Label => true";
-        x = new(_quantity, _label);
-        yield return argsToObjectArray();
-
-        #region toObjectArray
+        #region argsToObjectArray
         object[] argsToObjectArray()
         {
             TestCase_bool_MyType_MyType args = new(testCase, expected, x, y);
@@ -208,6 +219,11 @@ public sealed class MyTypeTests
             return random.Next(int.MinValue, int.MaxValue);
         }
         #endregion
+    }
+
+    private MyType GetMyType()
+    {
+        return new(_quantity, _label);
     }
 
     public static string GetDisplayName(MethodInfo methodInfo, object[] args)
