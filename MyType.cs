@@ -8,7 +8,6 @@ public sealed class MyType(int quantity, string label) : IEqualityComparer<MyTyp
     /// <summary>
     /// Egyenlőség összehasonlítás egy másik objektummal.
     /// </summary>
-    /// <param name="obj">Összehasonlítandó objektum</param>
     /// <returns>Ha a paraméter MyType-példány és minden tulajdonsága egyenlő, akkor true, egyébként false.</returns>
     public override bool Equals(object obj)
     {
@@ -20,8 +19,6 @@ public sealed class MyType(int quantity, string label) : IEqualityComparer<MyTyp
     /// <summary>
     /// Egyenlőség összehasonlítása két MyType-példány null-értének, vagy Quantity-tulajdonságuk értékének.
     /// </summary>
-    /// <param name="x">Egyik MyType-példány vagy null</param>
-    /// <param name="y">Másik MyType-példány vagy null</param>
     /// <returns>Ha mindkét paraméter null, vagy a mindkettőnek a Quantity-tulajdonsága egyenlő, akkor true, egyébként false.</returns>
     public bool Equals(MyType x, MyType y)
     {
