@@ -2,10 +2,10 @@
 
 namespace CsabaDu.DynamicDataTestDemo;
 
-public class MyType(int quantity, string label) : IEqualityComparer<MyType>
+public sealed class MyType(int quantity, string label) : IEqualityComparer<MyType>
 {
-    public int Quantity { get; set; } = quantity;
-    public string Label { get; set; } = label;
+    public int Quantity { get; init; } = quantity;
+    public string Label { get; init; } = label;
 
     public override bool Equals(object obj)
     {

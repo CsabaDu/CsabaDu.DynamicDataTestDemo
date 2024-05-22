@@ -90,7 +90,7 @@ public sealed class MyTypeTests
         int expected = _quantity.GetHashCode();
 
         // Act
-        var actual = other.GetHashCode(other);
+        var actual = _myType.GetHashCode(other);
 
         // Assert
         Assert.AreEqual(expected, actual);
@@ -158,28 +158,27 @@ public sealed class MyTypeTests
         expected = false;
         yield return argsToObjectArray();
 
-        testCase = "null, MyType => false";
-        x = null;
+        testCase = "Same Quantities, same Labels => true";
         y = GetMyType();
-        yield return argsToObjectArray();
-
-        testCase = "Same Quantity, same Label => true";
-        x = GetMyType();
         expected = true;
         yield return argsToObjectArray();
 
-        testCase = "Different Quantity, same Label => false";
-        _quantity = GetRandomQuantity(_quantity);
-        x = GetMyType();
+        testCase = "null, MyType => false";
+        x = null;
         expected = false;
         yield return argsToObjectArray();
 
-        testCase = "Different Quantity, different Label => false";
+        testCase = "Different Quantities, same Labels => false";
+        _quantity = GetRandomQuantity(_quantity);
+        x = GetMyType();
+        yield return argsToObjectArray();
+
+        testCase = "Different Quantities, different Labels => false";
         _label = DifferentLabel;
         x = GetMyType();
         yield return argsToObjectArray();
 
-        testCase = "Same Quantity, different Label => true";
+        testCase = "Same Quantities, different Labels => true";
         _quantity = y.Quantity;
         x = GetMyType();
         expected = true;
