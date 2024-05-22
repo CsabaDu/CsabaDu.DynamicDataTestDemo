@@ -1,6 +1,3 @@
-using System.Reflection;
-using CsabaDu.DynamicDataTestDemo.ObjectArrays;
-
 namespace CsabaDu.DynamicDataTestDemo;
 
 [TestClass]
@@ -12,6 +9,7 @@ public sealed class MyTypeTests
     private const string TestLabel = nameof(TestLabel);
     private const string DifferentLabel = nameof(DifferentLabel);
     private static readonly MyTypeTests Instance = new();
+    private const string DisplayName = nameof(GetDisplayName);
     #endregion Static fields
 
     private int _quantity;
@@ -37,7 +35,7 @@ public sealed class MyTypeTests
     #region bool Equals
     #region MyType.Equals(object)
     [TestMethod]
-    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = nameof(GetDisplayName))]
+    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
     public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
     {
         // Arrange
@@ -51,7 +49,7 @@ public sealed class MyTypeTests
 
     #region IEqualityComparer.Equals(MyType, MyType)
     [TestMethod]
-    [DynamicData(nameof(EqualsMyTypeMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = nameof(GetDisplayName))]
+    [DynamicData(nameof(EqualsMyTypeMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
     public void Equals_args_MyType_MyType_returns_expected(string testCase, bool expected, MyType x, MyType y)
     {
         // Arrange

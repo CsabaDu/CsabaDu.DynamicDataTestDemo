@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace CsabaDu.DynamicDataTestDemo;
+﻿namespace CsabaDu.DynamicDataTestDemo;
 
 public sealed class MyType(int quantity, string label) : IEqualityComparer<MyType>
 {
