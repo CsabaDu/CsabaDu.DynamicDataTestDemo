@@ -222,50 +222,6 @@ public sealed class MyTypeTests
     #endregion
 
     #region Test methods
-    #region bool Equals
-    #region MyType.Equals(object?)
-    [TestMethod]
-    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
-    {
-        // Arrange
-        // Act
-        var actual = myType.Equals(obj);
-
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-    #endregion
-
-    #region IEquatable<MyType>.Equals(MyType?)
-    [TestMethod]
-    [DynamicData(nameof(EqualsMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_arg_MyType_returns_expected(string testCase, bool expected, MyType myType, MyType other)
-    {
-        // Arrange
-        // Act
-        var actual = myType.Equals(other);
-
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-    #endregion
-
-    #region IEqualityComparer.Equals(MyType?, MyType?)
-    [TestMethod]
-    [DynamicData(nameof(EqualsMyTypeMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_args_MyType_MyType_returns_expected(string testCase, bool expected, MyType x, MyType y)
-    {
-        // Arrange
-        // Act
-        var actual = _comparer.Equals(x, y);
-
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-    #endregion
-    #endregion
-
     #region int GetHashCode
     #region MyType.GetHashCode()
     [TestMethod]
@@ -323,6 +279,50 @@ public sealed class MyTypeTests
 
         // Act
         bool actual = hashCode1 == hashCode2;
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    #endregion
+    #endregion
+
+    #region bool Equals
+    #region IEquatable<MyType>.Equals(MyType?)
+    [TestMethod]
+    [DynamicData(nameof(EqualsMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    public void Equals_arg_MyType_returns_expected(string testCase, bool expected, MyType myType, MyType other)
+    {
+        // Arrange
+        // Act
+        var actual = myType.Equals(other);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    #endregion
+
+    #region MyType.Equals(object?)
+    [TestMethod]
+    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
+    {
+        // Arrange
+        // Act
+        var actual = myType.Equals(obj);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+    #endregion
+
+    #region IEqualityComparer.Equals(MyType?, MyType?)
+    [TestMethod]
+    [DynamicData(nameof(EqualsMyTypeMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    public void Equals_args_MyType_MyType_returns_expected(string testCase, bool expected, MyType x, MyType y)
+    {
+        // Arrange
+        // Act
+        var actual = _comparer.Equals(x, y);
 
         // Assert
         Assert.AreEqual(expected, actual);
