@@ -1,6 +1,6 @@
-#nullable disable
-
 namespace CsabaDu.DynamicDataTestDemo;
+
+#nullable disable
 
 [TestClass]
 public sealed class MyTypeTests
@@ -70,26 +70,26 @@ public sealed class MyTypeTests
 
         string testCase = "Different Quantity, same Label => false";
         _quantity = DifferentQuantity;
-        object obj = GetMyType();
+        MyType other = GetMyType();
         bool expected = false;
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, same Label => true";
         _quantity = TestQuantity;
-        obj = GetMyType();
+        other = GetMyType();
         expected = true;
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, different Label => false";
         _label = testLabel;
-        obj = GetMyType();
+        other = GetMyType();
         expected = false;
         yield return argsToObjectArray();
 
         #region argsToObjectArray
         object[] argsToObjectArray()
         {
-            TestCase_bool_MyType_object args = new(testCase, expected, _myType, obj);
+            TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
 
             return args.ToObjectArray();
         }
@@ -131,32 +131,35 @@ public sealed class MyTypeTests
     #region Equals
     private IEnumerable<object[]> GetEqualsObjectArgs()
     {
-        IEnumerable<object[]> argsList = GetGetGashCodeArgs();
         _myType = InitMyType();
 
         string testCase = "null => false";
-        object obj = null;
+        object other = null;
         bool expected = false;
-        argsListAddArgs();
+        yield return argsToObjectArray();
 
         testCase = "object => false";
-        obj = new();
-        argsListAddArgs();
+        other = new();
+        yield return argsToObjectArray();
 
-        testCase = "Different Quantity, different Label => false";
+        testCase = "Same MyType => true";
+        other = GetMyType();
+        expected = true;
+        yield return argsToObjectArray();
+
+        testCase = "Different MyType => false";
         _quantity = DifferentQuantity;
         _label = testLabel;
-        obj = GetMyType();
-        argsListAddArgs();
+        other = GetMyType();
+        expected = false;
+        yield return argsToObjectArray();
 
-        return argsList;
-
-        #region argsListAddArgs
-        void argsListAddArgs()
+        #region argsToObjectArray
+        object[] argsToObjectArray()
         {
-            TestCase_bool_MyType_object args = new(testCase, expected, _myType, obj);
+            TestCase_bool_MyType_object args = new(testCase, expected, _myType, other);
 
-            argsList = argsList.Append(args.ToObjectArray());
+            return args.ToObjectArray();
         }
         #endregion
     }
@@ -167,26 +170,13 @@ public sealed class MyTypeTests
         _myType = InitMyType();
         MyType other = null;
         bool expected = false;
-        yield return argsToObjectArray();
 
-        foreach (object[] item in GetGetGashCodeArgs())
-        {
-            testCase = (string)item[0];
-            expected = (bool)item[1];
-            _myType = (MyType)item[2];
-            other = (MyType)item[3];
+        IEnumerable<object[]> argsList = GetGetGashCodeArgs();
 
-            yield return argsToObjectArray();
-        }
+        TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
+        object[] argsArray = args.ToObjectArray();
 
-        #region argsToObjectArray
-        object[] argsToObjectArray()
-        {
-            TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
-
-            return args.ToObjectArray();
-        }
-        #endregion
+        return argsList.Append(argsArray);
     }
 
     private IEnumerable<object[]> GetEqualsMyTypeMyTypeArgs()
@@ -197,32 +187,28 @@ public sealed class MyTypeTests
         MyType x = null;
         MyType y = null;
         bool expected = true;
-        argsListAddArgs();
+        addArgsToList();
 
         testCase = "MyType, null => false";
         x = GetMyType();
         expected = false;
-        argsListAddArgs();
+        addArgsToList();
 
         testCase = "null, MyType => false";
         x = null;
         y = GetMyType();
         expected = false;
-        argsListAddArgs();
-
-        testCase = "Same Quantities, same Labels => true";
-        x = GetMyType();
-        expected = true;
-        argsListAddArgs();
+        addArgsToList();
 
         return argsList;
 
-        #region argsListAddArgs
-        void argsListAddArgs()
+        #region addArgsToList
+        void addArgsToList()
         {
             TestCase_bool_MyType_MyType args = new(testCase, expected, x, y);
+            object[] argsArray = args.ToObjectArray();
 
-            argsList = argsList.Append(args.ToObjectArray());
+            argsList = argsList.Append(argsArray);
         }
         #endregion
     }
