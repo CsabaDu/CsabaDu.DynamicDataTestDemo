@@ -7,7 +7,7 @@ public sealed class MyTypeTests
 {
     #region General test preparation
     private const string TestLabel = nameof(TestLabel);
-    private const string DifferentLabel = nameof(DifferentLabel);
+    private const string testLabel = nameof(testLabel);
     private const int TestQuantity = 3;
     private const int DifferentQuantity = 4;
     private readonly MyType.QuantityEqualityComparer _comparer = new();
@@ -23,6 +23,12 @@ public sealed class MyTypeTests
         _label = TestLabel;
     }
 
+    [TestCleanup]
+    public void CleanupMyTypeTests()
+    {
+        _myType = null;
+    }
+
     private MyType GetMyType()
     {
         return new(_quantity, _label);
@@ -34,7 +40,6 @@ public sealed class MyTypeTests
     private static readonly MyTypeTests Instance = new();
 
     private static IEnumerable<object[]> EqualsMyTypeArgs => Instance.GetEqualsMyTypeArgs();
-
     private static IEnumerable<object[]> EqualsObjectArgs => Instance.GetEqualsObjectArgs();
     private static IEnumerable<object[]> EqualsMyTypeMyTypeArgs => Instance.GetEqualsMyTypeMyTypeArgs();
     private static IEnumerable<object[]> GetHashCodeArgs => Instance.GetGetGashCodeArgs();
@@ -63,25 +68,22 @@ public sealed class MyTypeTests
     {
         _myType = InitMyType();
 
-        string testCase = "Same Quantity, same Label => true";
-        object obj = GetMyType();
-        bool expected = true;
-        yield return argsToObjectArray();
-
-        testCase = "Different Quantity, same Label => false";
+        string testCase = "Different Quantity, same Label => false";
         _quantity = DifferentQuantity;
-        obj = GetMyType();
-        expected = false;
+        object obj = GetMyType();
+        bool expected = false;
         yield return argsToObjectArray();
 
-        testCase = "Different Quantity, different Label => false";
-        _label = DifferentLabel;
+        testCase = "Same Quantity, same Label => true";
+        _quantity = TestQuantity;
         obj = GetMyType();
+        expected = true;
         yield return argsToObjectArray();
 
         testCase = "Same Quantity, different Label => false";
-        _quantity = TestQuantity;
+        _label = testLabel;
         obj = GetMyType();
+        expected = false;
         yield return argsToObjectArray();
 
         #region argsToObjectArray
@@ -98,19 +100,14 @@ public sealed class MyTypeTests
     {
         _myType = InitMyType();
 
-        string testCase = "Same Quantities, same Labels => true";
-        MyType other = GetMyType();
-        bool expected = true;
-        yield return argsToObjectArray();
-
-        testCase = "Different Quantities, same Labels => false";
+        string testCase = "Different Quantities, same Labels => false";
         _quantity = DifferentQuantity;
-        other = GetMyType();
-        expected = false;
+        MyType other = GetMyType();
+        bool expected = false;
         yield return argsToObjectArray();
 
         testCase = "Different Quantities, different Labels => false";
-        _label = DifferentLabel;
+        _label = testLabel;
         other = GetMyType();
         yield return argsToObjectArray();
 
@@ -144,6 +141,12 @@ public sealed class MyTypeTests
 
         testCase = "object => false";
         obj = new();
+        argsListAddArgs();
+
+        testCase = "Different Quantity, different Label => false";
+        _quantity = DifferentQuantity;
+        _label = testLabel;
+        obj = GetMyType();
         argsListAddArgs();
 
         return argsList;
@@ -207,6 +210,11 @@ public sealed class MyTypeTests
         expected = false;
         argsListAddArgs();
 
+        testCase = "Same Quantities, same Labels => true";
+        x = GetMyType();
+        expected = true;
+        argsListAddArgs();
+
         return argsList;
 
         #region argsListAddArgs
@@ -225,20 +233,6 @@ public sealed class MyTypeTests
     #region int GetHashCode
     #region MyType.GetHashCode()
     [TestMethod]
-    public void GetHashCode_returns_constancy()
-    {
-        // Arrange
-        _myType = GetMyType();
-
-        // Act
-        int hashCode1 = _myType.GetHashCode();
-        int hashCode2 = _myType.GetHashCode();
-
-        // Assert
-        Assert.AreEqual(hashCode1, hashCode1);
-    }
-
-    [TestMethod]
     [DynamicData(nameof(GetHashCodeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
     public void GetHashCode_returns_expected(string testCase, bool expected, MyType myType, MyType other)
     {
@@ -255,20 +249,6 @@ public sealed class MyTypeTests
     #endregion
 
     #region IEqualityComparer.GetHashCode(MyType)
-    [TestMethod]
-    public void GetHashCode_arg_MyType_returns_constancy()
-    {
-        // Arrange
-        _myType = GetMyType();
-
-        // Act
-        int hashCode1 = _comparer.GetHashCode(_myType);
-        int hashCode2 = _comparer.GetHashCode(_myType);
-
-        // Assert
-        Assert.AreEqual(hashCode1, hashCode2);
-    }
-
     [TestMethod]
     [DynamicData(nameof(GetHashCodeMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
     public void GetHashCode_arg_MyType_returns_expected(string testCase, bool expected, MyType x, MyType y)
