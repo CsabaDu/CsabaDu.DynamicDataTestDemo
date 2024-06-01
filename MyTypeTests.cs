@@ -6,8 +6,8 @@ namespace CsabaDu.DynamicDataTestDemo;
 public sealed class MyTypeTests
 {
     #region General test preparation
-    private const string TestLabel = nameof(TestLabel);
-    private const string testLabel = nameof(testLabel); // kis t-betûvel
+    private const string TestLabel = nameof(TestLabel); // NagyBetûs
+    private const string testLabel = nameof(testLabel); // kisBetûs
     private const int TestQuantity = 3;
     private const int DifferentQuantity = 4;
 
@@ -126,6 +126,9 @@ public sealed class MyTypeTests
         TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
         object[] argsArray = args.ToObjectArray();
 
+        // + Same Quantity, different Label => false;
+        // + Different Quantity, same Label => false;
+        // + Same Quantity, same Label => true;
         return GetHashCodeArgs.Append(argsArray);
     }
     #endregion
