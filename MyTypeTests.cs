@@ -6,8 +6,8 @@ namespace CsabaDu.DynamicDataTestDemo;
 public sealed class MyTypeTests
 {
     #region General test preparation
-    private const string TestLabel = nameof(TestLabel); // NagyBetûs
-    private const string testLabel = nameof(testLabel); // kisBetûs
+    private const string TestLabel = nameof(TestLabel); // UpperCase
+    private const string testLabel = nameof(testLabel); // lowerCase
     private const int TestQuantity = 3;
     private const int DifferentQuantity = 4;
 
