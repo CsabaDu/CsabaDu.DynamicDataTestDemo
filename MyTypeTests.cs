@@ -30,12 +30,12 @@ public sealed class MyTypeTests
 
     private const string DisplayName = nameof(GetDisplayName);
 
-    public static string GetDisplayName(MethodInfo methodInfo, object[] args)
+    public static string GetDisplayName(MethodInfo testMethodInfo, object[] argsArray)
     {
-        string methodName = methodInfo.Name;
-        string testCase = (string)args[0];
+        string testMethodName = testMethodInfo.Name;
+        string testCase = (string)argsArray[0];
 
-        return $"{methodName}: {testCase}";
+        return $"{testMethodName}: {testCase}";
     }
 
     private MyType InitMyType()
