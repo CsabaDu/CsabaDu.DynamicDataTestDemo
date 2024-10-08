@@ -6,15 +6,15 @@ namespace CsabaDu.DynamicDataTestDemo;
 public sealed class MyTypeTests
 {
     #region General test preparation
+
     private const string TestLabel = nameof(TestLabel); // UpperCase
     private const string testLabel = nameof(testLabel); // lowerCase
     private const int TestQuantity = 3;
     private const int DifferentQuantity = 4;
 
+    private MyType _myType;
     private int _quantity;
     private string _label;
-    private MyType _myType;
-
     private object _obj;
     private MyType _other;
     int _hashCode1;
@@ -35,7 +35,9 @@ public sealed class MyTypeTests
     #endregion
 
     #region Simple tests
+
     #region Members for simple tests
+
     [TestInitialize]
     public void InitMyTypeTests()
     {
@@ -45,15 +47,23 @@ public sealed class MyTypeTests
     [TestCleanup]
     public void CleanupMyTypeTests()
     {
+        _quantity = default;
+        _label = default;
         _obj = default;
         _other = default;
-        _label = default;
-        _quantity = default;
+    }
+
+    private void InitHashCodes()
+    {
+        _hashCode1 = _myType.GetHashCode();
+        _hashCode2 = _other.GetHashCode();
     }
     #endregion
 
     #region Simple test methods
+
     #region Equals(object?)
+
     [TestMethod]
     public void Equals_object_null_returns_false()
     {
@@ -112,6 +122,7 @@ public sealed class MyTypeTests
     #endregion
 
     #region Equals(MyType?)
+
     [TestMethod]
     public void Equals_MyType_null_returns_false()
     {
@@ -168,6 +179,7 @@ public sealed class MyTypeTests
     #endregion
 
     #region GetHashCode()
+
     [TestMethod]
     public void GetHashCode_differentQuantity_AreNotEqual()
     {
@@ -176,12 +188,12 @@ public sealed class MyTypeTests
         _other = GetMyType();
 
         // Act
-        _hashCode1 = _myType.GetHashCode();
-        _hashCode2 = _other.GetHashCode();
+        InitHashCodes();
 
         // Assert
         Assert.AreNotEqual(_hashCode1, _hashCode2);
     }
+
     [TestMethod]
     public void GetHashCode_differentLabel_AreNotEqual()
     {
@@ -190,8 +202,7 @@ public sealed class MyTypeTests
         _other = GetMyType();
 
         // Act
-        _hashCode1 = _myType.GetHashCode();
-        _hashCode2 = _other.GetHashCode();
+        InitHashCodes();
 
         // Assert
         Assert.AreNotEqual(_hashCode1, _hashCode2);
@@ -204,8 +215,7 @@ public sealed class MyTypeTests
         _other = GetMyType();
 
         // Act
-        _hashCode1 = _myType.GetHashCode();
-        _hashCode2 = _other.GetHashCode();
+        InitHashCodes();
 
         // Assert
         Assert.AreEqual(_hashCode1, _hashCode2);
@@ -215,7 +225,9 @@ public sealed class MyTypeTests
     #endregion
 
     #region Dynamic data tests
+
     #region Members for dynamic data tests
+
     private string _testCase;
     private bool _expected;
 
@@ -235,48 +247,50 @@ public sealed class MyTypeTests
     }
     #endregion
 
-    #region Dynamic data test methods
-    [TestMethod]
-    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
-    {
-        // Arrange
-        // Act
-        var actual = myType.Equals(obj);
+    //#region Dynamic data test methods
 
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
+    //[TestMethod]
+    //[DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    //public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
+    //{
+    //    // Arrange
+    //    // Act
+    //    var actual = myType.Equals(obj);
 
-    [TestMethod]
-    [DynamicData(nameof(EqualsMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_arg_MyType_returns_expected(string testCase, bool expected, MyType myType, MyType other)
-    {
-        // Arrange
-        // Act
-        var actual = myType.Equals(other);
+    //    // Assert
+    //    Assert.AreEqual(expected, actual);
+    //}
 
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
+    //[TestMethod]
+    //[DynamicData(nameof(EqualsMyTypeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    //public void Equals_arg_MyType_returns_expected(string testCase, bool expected, MyType myType, MyType other)
+    //{
+    //    // Arrange
+    //    // Act
+    //    var actual = myType.Equals(other);
 
-    [TestMethod]
-    [DynamicData(nameof(GetHashCodeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void GetHashCode_returns_expected(string testCase, bool expected, MyType myType, MyType other)
-    {
-        // Arrange
-        _hashCode1 = myType.GetHashCode();
-        _hashCode2 = other.GetHashCode();
+    //    // Assert
+    //    Assert.AreEqual(expected, actual);
+    //}
 
-        // Act
-        var actual = _hashCode1 == _hashCode2;
+    //[TestMethod]
+    //[DynamicData(nameof(GetHashCodeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    //public void GetHashCode_returns_expected(string testCase, bool expected, MyType myType, MyType other)
+    //{
+    //    // Arrange
+    //    _hashCode1 = myType.GetHashCode();
+    //    _hashCode2 = other.GetHashCode();
 
-        // Assert
-        Assert.AreEqual(expected, actual);
-    }
-    #endregion
+    //    // Act
+    //    var actual = _hashCode1 == _hashCode2;
+
+    //    // Assert
+    //    Assert.AreEqual(expected, actual);
+    //}
+    //#endregion
 
     #region Dynamic data sources
+
     private IEnumerable<object[]> GetGetHashCodeArgs()
     {
         InitMyType();
