@@ -15,20 +15,216 @@ public sealed class MyTypeTests
     private string _label;
     private MyType _myType;
 
+    private object _obj;
+    private MyType _other;
+    int _hashCode1;
+    int _hashCode2;
+
     private MyType GetMyType()
     {
         return new(_quantity, _label);
     }
+
+    private void InitMyType()
+    {
+        _quantity = TestQuantity;
+        _label = TestLabel;
+
+        _myType = GetMyType();
+    }
     #endregion
 
+    #region Simple tests
+    #region Members for simple tests
+    [TestInitialize]
+    public void InitMyTypeTests()
+    {
+        InitMyType();
+    }
+
+    [TestCleanup]
+    public void CleanupMyTypeTests()
+    {
+        _obj = default;
+        _other = default;
+        _label = default;
+        _quantity = default;
+    }
+    #endregion
+
+    #region Simple test methods
+    #region Equals(object?)
+    [TestMethod]
+    public void Equals_object_null_returns_false()
+    {
+        // Arrange
+        _obj = null;
+
+        // Act
+        var actual = _myType.Equals(_obj);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_object_object_returns_false()
+    {
+        // Arrange
+        _obj = new();
+
+        // Act
+        var actual = _myType.Equals(_obj);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_object_differentMyType_returns_false()
+    {
+        // Arrange
+        _quantity = DifferentQuantity;
+        _label = testLabel;
+        _obj = GetMyType();
+
+        // Act
+        var actual = _myType.Equals(_obj);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_object_sameMyType_returns_true()
+    {
+        // Arrange
+        _quantity = TestQuantity;
+        _label = TestLabel;
+        _obj = GetMyType();
+
+        // Act
+        var actual = _myType.Equals(_obj);
+
+        // Assert
+        Assert.IsTrue(actual);
+    }
+    #endregion
+
+    #region Equals(MyType?)
+    [TestMethod]
+    public void Equals_MyType_null_returns_false()
+    {
+        // Arrange
+        _other = null;
+
+        // Act
+        var actual = _myType.Equals(_other);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_MyType_differentQuantity_returns_false()
+    {
+        // Arrange
+        _quantity = DifferentQuantity;
+        _other = GetMyType();
+
+        // Act
+        var actual = _myType.Equals(_other);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_MyType_differentLabel_returns_false()
+    {
+        // Arrange
+        _label = testLabel;
+        _other = GetMyType();
+
+        // Act
+        var actual = _myType.Equals(_other);
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public void Equals_MyType_sameProperties_returns_true()
+    {
+        // Arrange
+        _other = GetMyType();
+
+        // Act
+        var actual = _myType.Equals(_other);
+
+        // Assert
+        Assert.IsTrue(actual);
+    }
+    #endregion
+
+    #region GetHashCode()
+    [TestMethod]
+    public void GetHashCode_differentQuantity_AreNotEqual()
+    {
+        // Arrange
+        _quantity = DifferentQuantity;
+        _other = GetMyType();
+
+        // Act
+        _hashCode1 = _myType.GetHashCode();
+        _hashCode2 = _other.GetHashCode();
+
+        // Assert
+        Assert.AreNotEqual(_hashCode1, _hashCode2);
+    }
+    [TestMethod]
+    public void GetHashCode_differentLabel_AreNotEqual()
+    {
+        // Arrange
+        _label = testLabel;
+        _other = GetMyType();
+
+        // Act
+        _hashCode1 = _myType.GetHashCode();
+        _hashCode2 = _other.GetHashCode();
+
+        // Assert
+        Assert.AreNotEqual(_hashCode1, _hashCode2);
+    }
+
+    [TestMethod]
+    public void GetHashCode_sameProperties_AreEqual()
+    {
+        // Arrange
+        _other = GetMyType();
+
+        // Act
+        _hashCode1 = _myType.GetHashCode();
+        _hashCode2 = _other.GetHashCode();
+
+        // Assert
+        Assert.AreEqual(_hashCode1, _hashCode2);
+    }
+    #endregion
+    #endregion
+    #endregion
+
+    #region Dynamic data tests
     #region Members for dynamic data tests
+    private string _testCase;
+    private bool _expected;
+
     private static readonly MyTypeTests Instance = new();
+    private const string DisplayName = nameof(GetDisplayName);
 
     private static IEnumerable<object[]> EqualsMyTypeArgs => Instance.GetEqualsMyTypeArgs();
     private static IEnumerable<object[]> EqualsObjectArgs => Instance.GetEqualsObjectArgs();
     private static IEnumerable<object[]> GetHashCodeArgs => Instance.GetGetHashCodeArgs();
-
-    private const string DisplayName = nameof(GetDisplayName);
 
     public static string GetDisplayName(MethodInfo testMethodInfo, object[] argsArray)
     {
@@ -37,113 +233,16 @@ public sealed class MyTypeTests
 
         return $"{testMethodName}: {testCase}";
     }
-
-    private MyType InitMyType()
-    {
-        _quantity = TestQuantity;
-        _label = TestLabel;
-
-        return GetMyType();
-    }
     #endregion
 
-    #region Dynamic data sources
-    private IEnumerable<object[]> GetGetHashCodeArgs()
-    {
-        _myType = InitMyType();
-
-        string testCase = "Different Quantity, same Label => false";
-        _quantity = DifferentQuantity;
-        MyType other = GetMyType();
-        bool expected = false;
-        yield return argsToObjectArray();
-
-        testCase = "Same Quantity, same Label => true";
-        _quantity = TestQuantity;
-        other = GetMyType();
-        expected = true;
-        yield return argsToObjectArray();
-
-        testCase = "Same Quantity, different Label => false";
-        _label = testLabel;
-        other = GetMyType();
-        expected = false;
-        yield return argsToObjectArray();
-
-        #region argsToObjectArray
-        object[] argsToObjectArray()
-        {
-            TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
-
-            return args.ToObjectArray();
-        }
-        #endregion
-    }
-
-    private IEnumerable<object[]> GetEqualsObjectArgs()
-    {
-        _myType = InitMyType();
-
-        string testCase = "null => false";
-        object obj = null;
-        bool expected = false;
-        yield return argsToObjectArray();
-
-        testCase = "object => false";
-        obj = new();
-        yield return argsToObjectArray();
-
-        testCase = "Same MyType => true";
-        obj = GetMyType();
-        expected = true;
-        yield return argsToObjectArray();
-
-        testCase = "Different MyType => false";
-        _quantity = DifferentQuantity;
-        _label = testLabel;
-        obj = GetMyType();
-        expected = false;
-        yield return argsToObjectArray();
-
-        #region argsToObjectArray
-        object[] argsToObjectArray()
-        {
-            TestCase_bool_MyType_object args = new(testCase, expected, _myType, obj);
-
-            return args.ToObjectArray();
-        }
-        #endregion
-    }
-
-    private IEnumerable<object[]> GetEqualsMyTypeArgs()
-    {
-        _myType = InitMyType();
-
-        string testCase = "null => false";
-        MyType other = null;
-        bool expected = false;
-
-        TestCase_bool_MyType_MyType args = new(testCase, expected, _myType, other);
-        object[] argsArray = args.ToObjectArray();
-
-        // + Same Quantity, different Label => false;
-        // + Different Quantity, same Label => false;
-        // + Same Quantity, same Label => true;
-        return GetHashCodeArgs.Append(argsArray);
-    }
-    #endregion
-
-    #region Test methods
+    #region Dynamic data test methods
     [TestMethod]
-    [DynamicData(nameof(GetHashCodeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void GetHashCode_returns_expected(string testCase, bool expected, MyType myType, MyType other)
+    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
     {
         // Arrange
-        int hashCode1 = myType.GetHashCode();
-        int hashCode2 = other.GetHashCode();
-
         // Act
-        var actual = hashCode1 == hashCode2;
+        var actual = myType.Equals(obj);
 
         // Assert
         Assert.AreEqual(expected, actual);
@@ -162,16 +261,103 @@ public sealed class MyTypeTests
     }
 
     [TestMethod]
-    [DynamicData(nameof(EqualsObjectArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
-    public void Equals_arg_object_returns_expected(string testCase, bool expected, MyType myType, object obj)
+    [DynamicData(nameof(GetHashCodeArgs), DynamicDataSourceType.Property, DynamicDataDisplayName = DisplayName)]
+    public void GetHashCode_returns_expected(string testCase, bool expected, MyType myType, MyType other)
     {
         // Arrange
+        _hashCode1 = myType.GetHashCode();
+        _hashCode2 = other.GetHashCode();
+
         // Act
-        var actual = myType.Equals(obj);
+        var actual = _hashCode1 == _hashCode2;
 
         // Assert
         Assert.AreEqual(expected, actual);
     }
+    #endregion
+
+    #region Dynamic data sources
+    private IEnumerable<object[]> GetGetHashCodeArgs()
+    {
+        InitMyType();
+
+        _testCase = "Different Quantity, same Label => false";
+        _quantity = DifferentQuantity;
+        _other = GetMyType();
+        _expected = false;
+        yield return argsToObjectArray();
+
+        _testCase = "Same Quantity, same Label => true";
+        _quantity = TestQuantity;
+        _other = GetMyType();
+        _expected = true;
+        yield return argsToObjectArray();
+
+        _testCase = "Same Quantity, different Label => false";
+        _label = testLabel;
+        _other = GetMyType();
+        _expected = false;
+        yield return argsToObjectArray();
+
+        #region argsToObjectArray
+        object[] argsToObjectArray()
+        {
+            TestCase_bool_MyType_MyType args = new(_testCase, _expected, _myType, _other);
+
+            return args.ToObjectArray();
+        }
+        #endregion
+    }
+
+    private IEnumerable<object[]> GetEqualsObjectArgs()
+    {
+        InitMyType();
+
+        _testCase = "null => false";
+        _obj = null;
+        _expected = false;
+        yield return argsToObjectArray();
+
+        _testCase = "object => false";
+        _obj = new();
+        yield return argsToObjectArray();
+
+        _testCase = "Same MyType => true";
+        _obj = GetMyType();
+        _expected = true;
+        yield return argsToObjectArray();
+
+        _testCase = "Different MyType => false";
+        _quantity = DifferentQuantity;
+        _label = testLabel;
+        _obj = GetMyType();
+        _expected = false;
+        yield return argsToObjectArray();
+
+        #region argsToObjectArray
+        object[] argsToObjectArray()
+        {
+            TestCase_bool_MyType_object args = new(_testCase, _expected, _myType, _obj);
+
+            return args.ToObjectArray();
+        }
+        #endregion
+    }
+
+    private IEnumerable<object[]> GetEqualsMyTypeArgs()
+    {
+        InitMyType();
+
+        _testCase = "null => false";
+        _other = null;
+        _expected = false;
+
+        TestCase_bool_MyType_MyType args = new(_testCase, _expected, _myType, _other);
+        object[] nullMyTypeArgsArray = args.ToObjectArray();
+
+        return GetHashCodeArgs.Append(nullMyTypeArgsArray);
+    }
+    #endregion
     #endregion
 }
 
